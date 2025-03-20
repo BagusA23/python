@@ -13,7 +13,7 @@ class SimpleCalculator:
         return self.pertama * self.kedua
 
     def bagi(self):
-        if self.kedua != 0:
+        if self.kedua != 0 or self.pertama != 0:
             return self.pertama / self.kedua
         else:
             raise ValueError("Tidak bisa melakukan pembagian dengan angka 0.")
