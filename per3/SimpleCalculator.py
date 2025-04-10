@@ -44,3 +44,9 @@ try:
     print(calculator.hasil(operasi))
 except ValueError as e:
     print(e)
+
+
+class ExtraCalculator(SimpleCalculator):
+    def tambah(self):
+        return self.pertama + self.kedua + 10
+    
