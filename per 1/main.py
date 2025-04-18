@@ -14,3 +14,7 @@ class Student:
 
 p1 = Student('Bagus', 12, 12, 'Informatika')
 p1.infor()
+
+p1.age = 20
+p1.name = 'Bagus Satria'
+p1.infor()
