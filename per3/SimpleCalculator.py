@@ -49,4 +49,3 @@ except ValueError as e:
 class ExtraCalculator(SimpleCalculator):
     def tambah(self):
         return self.pertama + self.kedua + 10
-    
