@@ -1,97 +1,79 @@
-import tkinter as tk
-from tkinter import ttk
+# Konversi dari Tkinter ke Kivy
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
+from kivy.uix.button import Button
+from kivy.core.window import Window
+
+Window.clearcolor = (0.17, 0.24, 0.31, 1)  # #2c3e50 background gelap
 
 
-class Calculator:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("🧮 Kalkulator Modern")
-        self.root.geometry("350x300")
-        self.root.configure(bg="#2c3e50")  # Background gelap elegan
+class CalculatorLayout(BoxLayout):
+    def __init__(self, **kwargs):
+        super().__init__(orientation='vertical', padding=20, spacing=15, **kwargs)
 
-        self.angka1 = tk.StringVar()
-        self.angka2 = tk.StringVar()
-        self.result = tk.StringVar()
+        self.angka1 = TextInput(hint_text="Angka 1",
+                                multiline=False, font_size=18)
+        self.angka2 = TextInput(hint_text="Angka 2",
+                                multiline=False, font_size=18)
+        self.result = TextInput(hint_text="Hasil", readonly=True, font_size=18)
 
-        self.create_widgets()
+        self.add_widget(Label(text="Kalkulator Modern",
+                        font_size=24, color=(0.93, 0.94, 0.95, 1)))
+        self.add_widget(self.angka1)
+        self.add_widget(self.angka2)
+        self.add_widget(self.result)
 
-    def create_widgets(self):
-        style = ttk.Style()
-        style.theme_use("clam")
-        style.configure("TLabel", background="#2c3e50",
-                        foreground="#ecf0f1", font=("Segoe UI", 11))
-        style.configure("TEntry", font=("Segoe UI", 11))
-        style.configure("TButton", font=("Segoe UI", 11, "bold"), padding=6)
+        button_layout = BoxLayout(spacing=10, size_hint=(1, 0.3))
 
-        title = ttk.Label(self.root, text="Kalkulator Sederhana",
-                          font=("Segoe UI", 14, "bold"))
-        title.grid(row=0, column=0, columnspan=2, pady=(10, 20))
+        btn_plus = Button(text="+", font_size=20, on_press=self.add)
+        btn_min = Button(text="-", font_size=20, on_press=self.subtract)
+        btn_mul = Button(text="×", font_size=20, on_press=self.multiply)
+        btn_div = Button(text="÷", font_size=20, on_press=self.divide)
 
-        ttk.Label(self.root, text="Angka 1").grid(
-            row=1, column=0, padx=10, pady=5, sticky="w")
-        self.ent_angka1 = ttk.Entry(
-            self.root, textvariable=self.angka1, width=25)
-        self.ent_angka1.grid(row=1, column=1, padx=10, pady=5)
-        self.ent_angka1.focus()
+        for btn in (btn_plus, btn_min, btn_mul, btn_div):
+            button_layout.add_widget(btn)
 
-        ttk.Label(self.root, text="Angka 2").grid(
-            row=2, column=0, padx=10, pady=5, sticky="w")
-        self.ent_angka2 = ttk.Entry(
-            self.root, textvariable=self.angka2, width=25)
-        self.ent_angka2.grid(row=2, column=1, padx=10, pady=5)
+        self.add_widget(button_layout)
 
-        ttk.Label(self.root, text="Hasil").grid(
-            row=3, column=0, padx=10, pady=5, sticky="w")
-        self.ent_result = ttk.Entry(
-            self.root, textvariable=self.result, width=25, state="readonly")
-        self.ent_result.grid(row=3, column=1, padx=10, pady=5)
-
-        # Tombol operasi
-        btn_frame = tk.Frame(self.root, bg="#2c3e50")
-        btn_frame.grid(row=4, column=0, columnspan=2, pady=15)
-
-        ttk.Button(btn_frame, text="+", width=6,
-                   command=self.add).grid(row=0, column=0, padx=5)
-        ttk.Button(btn_frame, text="-", width=6,
-                   command=self.subtract).grid(row=0, column=1, padx=5)
-        ttk.Button(btn_frame, text="×", width=6, command=self.kali).grid(
-            row=0, column=2, padx=5)
-        ttk.Button(btn_frame, text="÷", width=6, command=self.bagi).grid(
-            row=0, column=3, padx=5)
-
-    def add(self):
+    def get_values(self):
         try:
-            result = float(self.angka1.get()) + float(self.angka2.get())
-            self.result.set(str(result))
+            a = float(self.angka1.text)
+            b = float(self.angka2.text)
+            return a, b
         except ValueError:
-            self.result.set("Input salah")
+            self.result.text = "Input salah"
+            return None, None
 
-    def subtract(self):
-        try:
-            result = float(self.angka1.get()) - float(self.angka2.get())
-            self.result.set(str(result))
-        except ValueError:
-            self.result.set("Input salah")
+    def add(self, _):
+        a, b = self.get_values()
+        if a is not None:
+            self.result.text = str(a + b)
 
-    def kali(self):
-        try:
-            result = float(self.angka1.get()) * float(self.angka2.get())
-            self.result.set(str(result))
-        except ValueError:
-            self.result.set("Input salah")
+    def subtract(self, _):
+        a, b = self.get_values()
+        if a is not None:
+            self.result.text = str(a - b)
 
-    def bagi(self):
-        try:
-            if float(self.angka2.get()) != 0:
-                result = float(self.angka1.get()) / float(self.angka2.get())
-                self.result.set(str(result))
+    def multiply(self, _):
+        a, b = self.get_values()
+        if a is not None:
+            self.result.text = str(a * b)
+
+    def divide(self, _):
+        a, b = self.get_values()
+        if a is not None:
+            if b != 0:
+                self.result.text = str(a / b)
             else:
-                self.result.set("Tidak bisa dibagi 0")
-        except ValueError:
-            self.result.set("Input salah")
+                self.result.text = "Tidak bisa dibagi 0"
+
+
+class KalkulatorApp(App):
+    def build(self):
+        return CalculatorLayout()
 
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = Calculator(root)
-    root.mainloop()
+    KalkulatorApp().run()
